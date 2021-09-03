@@ -1,0 +1,26 @@
+-- Task 3.1
+SELECT product_id, Month(date), sum(case action when 'true' then 1 else 0 end) / count(action) AS click-through-rate
+FROM IMPRESSIONS
+GROUP BY product_id, Month(date)
+
+-- Task 3.2
+SELECT category_id, sum(case action when 'true' then 1 else 0 end) / count(action) AS click-through-rate 
+FROM IMPRESSIONS
+INNER JOIN PRODUCTS
+ON IMPRESSIONS.product_id = PRODUCTS.product_id
+GROUP BY category_ID
+ORDER BY click-through-rate DESC
+LIMIT 3
+
+-- Task 3.3
+SELECT t.price as price_tier, sum(case action when 'true' then 1 else 0 end) / count(action) AS click-through-rate
+FROM(
+        SELECT CASE
+                WHEN price BETWEEN 0-5 THEN '0-5'
+                WHEN price BETWEEN 5-10 THEN '5-10'
+                WHEN price BETWEEN 0-5 THEN '10-15'
+                ELSE '>15' end as price_tier
+        FROM IMPRESSIONS
+        INNER JOIN PRODUCTS
+        ON IMPRESSIONS.product_id = PRODUCTS.product_id) t
+GROUP BY t.price
